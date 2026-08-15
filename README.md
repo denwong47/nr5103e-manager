@@ -1,8 +1,19 @@
-# nr5103e-manager
+# Zyxel NR5103E 5G Model Connectivity Monitor
 
 A small FastAPI service, packaged as a Docker container, that watches your internet
 connectivity and automatically reboots a Zyxel NR5103E 5G hotspot/router when it
 gets stuck.
+
+> [!TIP]
+>
+> **Is this AI?**
+>
+> This README is written by Claude, but nothing else in the repo is. I wrote this on an edge
+> node that has a slim distro without DE, and I couldn't be bothered setting up Claude or
+> anything.
+>
+> This README was written afterwards.
+
 
 ## Why this exists
 
@@ -49,7 +60,7 @@ checking `/health` or triggering `/modem/reboot` while away from home.
 1. Copy the environment template and fill in your router credentials:
 
    ```bash
-   cp .env.example .env   # or create .env from scratch, see table below
+   cp .env.example .env
    ```
 
 2. Build and start the container:
