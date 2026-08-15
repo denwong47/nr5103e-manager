@@ -13,6 +13,8 @@ services:
       - PYTHONDONTWRITEBYTECODE=1
     volumes:
       - ./logs:/app/logs
+      # TODO If we want dev mode to actually work, we'll have to mount the source code into
+      # the container.
     env_file:
       - path: .env
         required: true
