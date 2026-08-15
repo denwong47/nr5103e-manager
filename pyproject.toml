@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nr5103e-manager"
+version = "0.1.0"
+description = "API endpoint for a worker managing the Zyxel NR5103E."
+requires-python = ">=3.13"
+dependencies = [
+    "nr5103e-sdk>=1.0.1",
+    "fastapi[standard]>=0.141.1",
+    "pydantic>=2.13.4",
+    "uvicorn[standard]"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.21",
+    "pre-commit",
+    "isort",
+    "ruff",
+    "ipython",
+    "ipdb"
+]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+
+[tool.setuptools.packages.find]
+where = ["src"]

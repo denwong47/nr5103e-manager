@@ -1,0 +1,19 @@
+services:
+  nr5103e-manager:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+      network: host
+      args:
+        MODE: ${MODE}
+    container_name: nr5103e-manager
+    restart: unless-stopped
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PYTHONDONTWRITEBYTECODE=1
+    volumes:
+      - ./logs:/app/logs
+    env_file:
+      - path: .env
+        required: true
+    network_mode: host
