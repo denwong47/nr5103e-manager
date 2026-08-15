@@ -30,6 +30,8 @@ def create_lifespan(
             app_id=id(app),
         )
         ping_targets = config.get_ping_targets()
+        monitored_ips = config.get_monitored_ips()
+        config.validate_monitored_ips_subset(monitored_ips, ping_targets)
 
         logger.info("Instantiating lifespan data...")
 
@@ -45,6 +47,7 @@ def create_lifespan(
                 stop_signal=stop_signal,
             ),
             monitor_cellular_health(
+                monitored_ips=monitored_ips,
                 ping_responses=lifespan_data.ping_history,
                 session=lifespan_data.nr5103e_session,
                 interval=config.MONITORING_INTERVAL,

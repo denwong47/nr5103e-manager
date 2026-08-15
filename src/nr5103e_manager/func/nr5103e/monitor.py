@@ -1,18 +1,13 @@
 import asyncio
 from collections.abc import Mapping
 
-from pydantic import IPvAnyAddress, TypeAdapter
+from pydantic import IPvAnyAddress
 
 from ...common import wait_at_least
 from ...models import logger
 from ...models.nr5103e import NR5103ESession
 from ...models.ping import PingResponse
 from .reboot import reboot
-
-MONITORED_IPS = ("1.1.1.1", "8.8.8.8")
-"""
-The subset of IPs that when failed to ping, will trigger a modem reboot.
-"""
 
 MIN_SUCCESS_RATE = 0.01
 """
@@ -23,7 +18,7 @@ If the success rate is below or equal this threshold, a reboot will be triggered
 
 async def monitor_cellular_health(
     *,
-    monitored_ips: tuple[str, ...] = MONITORED_IPS,
+    monitored_ips: list[IPvAnyAddress],
     ping_responses: Mapping[IPvAnyAddress, PingResponse],
     session: NR5103ESession,
     interval: float,
@@ -35,6 +30,8 @@ async def monitor_cellular_health(
 
     Parameters
     ----------
+    monitored_ips : list[IPvAnyAddress]
+        The subset of IPs that, when failed to ping, will trigger a modem reboot.
     ping_responses : Mapping[IPvAnyAddress, PingResponse]
         A mapping of IP addresses to their corresponding ping responses.
     session : NR5103ESession
@@ -46,8 +43,6 @@ async def monitor_cellular_health(
     """
     logger.info("Starting cellular health monitoring.")
 
-    ips = TypeAdapter(tuple[IPvAnyAddress, ...]).validate_python(monitored_ips)
-
     while True:
         if stop_signal and stop_signal.is_set():
             logger.info("Stopping cellular health monitoring.")
@@ -55,12 +50,15 @@ async def monitor_cellular_health(
 
         async with wait_at_least(interval):
             relevant_pings = [
-                ping_responses[ip].summary for ip in ips if ip in ping_responses
+                ping_responses[ip].summary
+                for ip in monitored_ips
+                if ip in ping_responses
             ]
 
             if not relevant_pings:
                 logger.warning(
-                    "No ping responses available for monitored IPs yet: {ips}", ips=ips
+                    "No ping responses available for monitored IPs yet: {ips}",
+                    ips=monitored_ips,
                 )
                 continue
 
